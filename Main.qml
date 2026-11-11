@@ -8,13 +8,41 @@ Item {
     property var cfg: pluginApi?.pluginSettings || ({})
     readonly property string loginUrl: "http://neverssl.com/"
 
+    property string currentConnection: ""
+    property bool connectionFull: false
+
     function check() {
-        if (!probe.running)
-            probe.running = true;
+        if (!connectionReader.running && !probe.running)
+            connectionReader.running = true;
+    }
+
+    function updateConnection(connection) {
+        if (connection !== currentConnection) {
+            currentConnection = connection;
+            connectionFull = false;
+            handledConnection = "";
+        }
+        return connection !== "" && !connectionFull;
+    }
+
+    Process {
+        id: connectionReader
+        // Local D-Bus query only: no internet connectivity probe.
+        // ActiveConnection paths change even when reconnecting to the same profile.
+        command: ["nmcli", "-t", "-f", "GENERAL.CON-PATH", "device", "show"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var paths = text.trim().split(/\r?\n/).filter(
+                    line => line.indexOf("/org/freedesktop/NetworkManager/ActiveConnection/") !== -1);
+                var connection = paths.sort().join("|");
+                if (root.updateConnection(connection))
+                    probe.running = true;
+            }
+        }
     }
 
     Timer {
-        interval: Math.max(10, Number(root.cfg.intervalSeconds || 20)) * 1000
+        interval: root.connectionFull ? 300000 : Math.max(10, Number(root.cfg.intervalSeconds || 20)) * 1000
         running: true
         repeat: true
         triggeredOnStart: true
@@ -23,10 +51,8 @@ Item {
 
     Process {
         id: probe
-        // NetworkManager performs its configured HTTP connectivity probe.
-        // UUIDs are data only; no network-provided text is executed.
-        command: ["sh", "-c",
-            "nmcli -t -f UUID connection show --active; nmcli -t networking connectivity check"]
+        // Only runs until this connection reports full connectivity.
+        command: ["nmcli", "-t", "networking", "connectivity", "check"]
         property string output: ""
         stdout: StdioCollector {
             onStreamFinished: probe.output = text
@@ -36,10 +62,14 @@ Item {
                 console.warn("Captive Portal: nmcli failed; verify NetworkManager and connectivity checking.");
                 return;
             }
-            var lines = output.trim().split(/\r?\n/);
-            var state = lines.pop();
-            var connection = lines.sort().join("|");
-            if (state === "none" || state === "full") {
+            var state = output.trim();
+            var connection = root.currentConnection;
+            if (state === "full") {
+                root.connectionFull = true;
+                root.handledConnection = "";
+                return;
+            }
+            if (state === "none") {
                 root.handledConnection = "";
                 return;
             }
