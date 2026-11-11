@@ -12,7 +12,8 @@
   ],
   "entryPoints": {
     "main": "Main.qml",
-    "barWidget": "BarWidget.qml"
+    "barWidget": "BarWidget.qml",
+    "panel": "Panel.qml"
   },
   "dependencies": {
     "plugins": []
@@ -20,7 +21,8 @@
   "metadata": {
     "defaultSettings": {
       "autoOpen": true,
-      "intervalSeconds": 20
+      "intervalSeconds": 20,
+      "idleIntervalSeconds": 300
     }
   }
 }

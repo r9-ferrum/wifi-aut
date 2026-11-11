@@ -14,7 +14,7 @@ NIconButton {
     property int sectionWidgetsCount: 0
 
     icon: "world"
-    tooltipText: "Открыть страницу авторизации Wi-Fi"
+    tooltipText: "Captive Portal — сеть, статус и настройки"
     tooltipDirection: BarService.getTooltipDirection(screen?.name)
     baseSize: Style.getCapsuleHeightForScreen(screen?.name)
     applyUiScale: false
@@ -24,16 +24,7 @@ NIconButton {
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
     onClicked: {
-        if (!browser.running)
-            browser.running = true;
-    }
-
-    Process {
-        id: browser
-        command: ["xdg-open", "http://neverssl.com/"]
-        onExited: function(code) {
-            if (code !== 0)
-                console.warn("Captive Portal: cannot open the default browser.");
-        }
+        if (pluginApi)
+            pluginApi.togglePanel(root.screen, root);
     }
 }

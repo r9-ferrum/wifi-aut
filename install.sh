@@ -9,7 +9,7 @@ case "${1:-}" in
   '') ;;
   *) printf 'Usage: bash install.sh [--check]\n' >&2; exit 2 ;;
 esac
-for file in manifest.json Main.qml BarWidget.qml README.md; do
+for file in manifest.json Main.qml BarWidget.qml Panel.qml README.md; do
   [[ -s "$source_dir/$file" ]] || { printf 'Missing source file: %s\n' "$file" >&2; exit 1; }
 done
 missing=()
@@ -38,7 +38,7 @@ if [[ -e "$target" || -L "$target" ]]; then
   printf 'Previous installation saved: %s\n' "$backup"
 fi
 mkdir -- "$target"
-for file in manifest.json Main.qml BarWidget.qml README.md; do
+for file in manifest.json Main.qml BarWidget.qml Panel.qml README.md; do
   install -m 644 -- "$source_dir/$file" "$target/$file"
 done
 printf 'Installed: %s\nRestart Noctalia and enable Captive Portal in plugin settings.\n' "$target"
