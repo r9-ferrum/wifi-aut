@@ -1,0 +1,48 @@
+id = "r9-ferrum/captive-portal"
+name = "Captive Portal"
+version = "2.0.0"
+plugin_api = 43
+author = "r9-ferrum"
+license = "MIT"
+description = "Авторизация в публичном Wi-Fi через NetworkManager."
+icon = "world"
+tags = ["network"]
+dependencies = ["nmcli", "notify-send", "xdg-open"]
+
+[[setting]]
+key = "autoOpen"
+type = "bool"
+label_key = "autoOpen"
+default = true
+
+[[setting]]
+key = "intervalSeconds"
+type = "int"
+label_key = "intervalSeconds"
+default = 20
+min = 10
+max = 86400
+
+[[setting]]
+key = "idleIntervalSeconds"
+type = "int"
+label_key = "idleIntervalSeconds"
+default = 300
+min = 30
+max = 86400
+
+[[service]]
+id = "service"
+entry = "service.luau"
+
+[[widget]]
+id = "portal"
+entry = "widget.luau"
+
+[[panel]]
+id = "status"
+entry = "panel.luau"
+width = 480
+height = 360
+placement = "attached"
+position = "auto"
