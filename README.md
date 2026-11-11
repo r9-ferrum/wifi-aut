@@ -4,7 +4,15 @@
 
 ## Установка
 
-В обычном терминале пользователя из каталога проекта:
+Установка одной командой из GitHub:
+
+```bash
+sudo pacman -S --needed git && bash -c 'set -e; work=$(mktemp -d); trap '\''rm -rf -- "$work"'\'' EXIT; git clone --depth 1 https://github.com/r9-ferrum/wifi-aut.git "$work/repo"; bash "$work/repo/install.sh"'
+```
+
+Команду запускайте в обычном терминале от своего пользователя, без `sudo` перед `install.sh`. Она сама скачивает `main` во временную папку, проверяет плагин и устанавливает его.
+
+Установка из уже скачанного каталога:
 
 ```bash
 bash install.sh
