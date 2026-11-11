@@ -1,0 +1,26 @@
+{
+  "id": "captive-portal",
+  "name": "Captive Portal",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "4.6.6",
+  "author": "Local",
+  "license": "MIT",
+  "description": "Уведомление и открытие страницы входа в публичный Wi-Fi.",
+  "tags": [
+    "System",
+    "Network"
+  ],
+  "entryPoints": {
+    "main": "Main.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  },
+  "metadata": {
+    "defaultSettings": {
+      "autoOpen": true,
+      "intervalSeconds": 20
+    }
+  }
+}
